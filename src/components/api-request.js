@@ -728,7 +728,19 @@ export default class ApiRequest extends LitElement {
             false,
           );
           if (reqBody.schema) {
-            reqBodyFormHtml = this.formDataTemplate(reqBody.schema, reqBody.mimeType, (ex[0] ? ex[0].exampleValue : ''));
+            reqBodyFormHtml = html`<div class = 'example-panel border-top pad-top-8'>
+              ${(reqBody.schema.oneOf?.length || 1) === 1
+                ? ''
+                : html`
+                  <select style="min-width:100px; max-width:100%;  margin-bottom:-1px;" @change='${(e) => { this.selectedRequestBodyExample = e.target.value; }}'>
+                    ${reqBody.schema.oneOf.map((v, idx) => html`<option value="${idx}" ?selected=${idx === this.selectedRequestBodyExample} > 
+                      ${`Example ${idx + 1}`} 
+                    </option>`)}
+                  </select>
+                `
+              }
+              ${this.formDataTemplate(reqBody.schema.oneOf ? reqBody.schema.oneOf[parseInt(this.selectedRequestBodyExample, 10) || 0] : reqBody.schema, reqBody.mimeType, (ex[0] ? ex[0].exampleValue : ''))}            
+            </div>`;
           }
         }
       } else if ((/^audio\/|^image\/|^video\/|^font\/|tar$|zip$|7z$|rtf$|msword$|excel$|\/pdf$|\/octet-stream$/.test(this.selectedRequestBodyType))) {
