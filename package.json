@@ -38,6 +38,7 @@
     "buffer": "^6.0.3",
     "lit": "^3.2.1",
     "marked": "4.3.0",
+    "mermaid": "^11.6.0",
     "prismjs": "^1.29.0",
     "randexp": "^0.5.3",
     "xml-but-prettier": "^1.0.1"

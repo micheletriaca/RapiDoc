@@ -10,6 +10,7 @@ import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-http';
 import 'prismjs/components/prism-csharp';
+import mermaid from 'mermaid';
 
 // Styles
 import FontStyles from '~/styles/font-styles';
@@ -28,6 +29,12 @@ import ProcessSpec from '~/utils/spec-parser';
 import mainBodyTemplate from '~/templates/main-body-template';
 import { applyApiKey, onClearAllApiKeys } from '~/templates/security-scheme-template';
 import { setApiServer } from '~/templates/server-template';
+
+mermaid.initialize({
+  startOnLoad: false,
+  securityLevel: 'strict',
+  theme: 'dark',
+});
 
 export default class RapiDoc extends LitElement {
   constructor() {
@@ -532,6 +539,10 @@ export default class RapiDoc extends LitElement {
         if (Prism.languages[lang]) {
           return Prism.highlight(code, Prism.languages[lang], lang);
         }
+        if (lang === 'mermaid') {
+          const id = `mermaid-${Math.random().toString(36).substring(2, 9)}`;
+          return `<div class="mermaid" id="${id}">${code}</div>`;
+        }
         return code;
       },
     });
@@ -563,6 +574,13 @@ export default class RapiDoc extends LitElement {
       this.shadowRoot.appendChild(cssLinkEl.cloneNode());
     }
     return mainBodyTemplate.call(this);
+  }
+
+  async updated() {
+    this.shadowRoot.querySelectorAll('.mermaid').forEach(async (block) => {
+      const svg = await mermaid.render('graph1', block.textContent);
+      block.innerHTML = svg.svg;
+    });
   }
 
   observeExpandedContent() {
