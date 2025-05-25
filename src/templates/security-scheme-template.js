@@ -92,10 +92,6 @@ async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, g
   const urlFormParams = new URLSearchParams();
   const headers = new Headers();
   urlFormParams.append('grant_type', grantType);
-  if (grantType === 'authorization_code') {
-    urlFormParams.append('client_id', clientId);
-    urlFormParams.append('client_secret', clientSecret);
-  }
   if (grantType !== 'client_credentials' && grantType !== 'password') {
     urlFormParams.append('redirect_uri', redirectUrl);
   }
@@ -105,7 +101,7 @@ async function fetchAccessToken(tokenUrl, clientId, clientSecret, redirectUrl, g
   }
   if (sendClientSecretIn === 'header') {
     headers.set('Authorization', `Basic ${Buffer.from(`${clientId}:${clientSecret}`, 'utf8').toString('base64')}`);
-  } else if (grantType !== 'authorization_code') {
+  } else {
     urlFormParams.append('client_id', clientId);
     urlFormParams.append('client_secret', clientSecret);
   }
